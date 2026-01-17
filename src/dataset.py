@@ -78,8 +78,15 @@ def load_dataset(dataset="hcp", window_size=30, window_stride=10, measure="corre
     # create and save dataset if does not exist
     else:
         logging.info('No existing .pkl dataset. Pre-processing fMRI timeseries...')
+        filepaths = _get_filepaths(dataset, data_dir)
+        logging.info(f'Found {len(filepaths)} .npy files in {pathlib.Path(data_dir) / dataset / "raw"}')
+        
+        if len(filepaths) == 0:
+            logging.warning(f'No .npy files found! Check that data exists in {pathlib.Path(data_dir) / dataset / "raw"}')
+            return []
+        
         _dataset = []
-        for idx, filepath in enumerate(_get_filepaths(dataset, data_dir)):
+        for idx, filepath in enumerate(filepaths):
             logging.info(f'Loading timeseries for file {filepath}. Index: {idx}.')
             X, y = _load_timeseries(filepath)
             logging.info(f'Computing dynamic functional connectivitiy...')

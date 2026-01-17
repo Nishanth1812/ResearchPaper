@@ -244,8 +244,50 @@ def main(args):
     # Load dataset
     # Convert to absolute path to avoid issues with relative paths
     data_dir = Path(args.data_dir).resolve()
-    print(f"\n📊 Loading {args.dataset.upper()} dataset from {data_dir}...")
+    
+    # Validate data directory exists
+    raw_data_dir = data_dir / args.dataset / "raw"
+    print(f"\n📊 Loading {args.dataset.upper()} dataset...")
+    print(f"   Data directory: {data_dir}")
+    print(f"   Raw data path: {raw_data_dir}")
+    
+    if not data_dir.exists():
+        print(f"\n❌ ERROR: Data directory does not exist: {data_dir}")
+        print(f"\n   Please extract the dataset first:")
+        print(f"   cd {data_dir.parent}")
+        print(f"   unzip dataset.zip")
+        sys.exit(1)
+    
+    if not raw_data_dir.exists():
+        print(f"\n❌ ERROR: Raw data directory does not exist: {raw_data_dir}")
+        print(f"\n   Expected structure:")
+        print(f"   {data_dir}/")
+        print(f"   └── {args.dataset}/")
+        print(f"       └── raw/")
+        print(f"           └── *.npy files")
+        print(f"\n   Please check your data extraction:")
+        print(f"   ls -la {data_dir}")
+        print(f"   ls -la {data_dir}/{args.dataset}/")
+        sys.exit(1)
+    
+    # Check for .npy files
+    npy_files = list(raw_data_dir.glob("*.npy"))
+    if len(npy_files) == 0:
+        print(f"\n❌ ERROR: No .npy files found in {raw_data_dir}")
+        print(f"\n   Please extract the dataset:")
+        print(f"   cd {data_dir.parent}")
+        print(f"   unzip -o dataset.zip")
+        sys.exit(1)
+    
+    print(f"   Found {len(npy_files)} .npy files")
+    
     dataset = load_dataset(**dataset_args, data_dir=str(data_dir))
+    
+    if len(dataset) == 0:
+        print(f"\n❌ ERROR: Dataset is empty after loading!")
+        print(f"   This might mean the .npy files are corrupted or in wrong format.")
+        sys.exit(1)
+    
     num_subjects, num_nodes = len(dataset), dataset[0][1][0].number_of_nodes()
     print(f"✅ Loaded {num_subjects} subjects with {num_nodes} nodes each")
     

@@ -100,10 +100,26 @@ echo "📊 Checking for dataset..."
 if [ -f "$REPO_DIR/dataset.zip" ]; then
     echo "   Found dataset.zip, extracting..."
     # Note: dataset.zip already contains data/ folder structure
-    unzip -o "$REPO_DIR/dataset.zip" -d "$REPO_DIR/"
-    echo "   ✅ Dataset extracted to $REPO_DIR/data/"
+    cd "$REPO_DIR"
+    unzip -o dataset.zip
+    
+    # Verify extraction
+    if [ -d "$REPO_DIR/data/hcp/raw" ]; then
+        HCP_COUNT=$(ls -1 "$REPO_DIR/data/hcp/raw"/*.npy 2>/dev/null | wc -l)
+        echo "   ✅ HCP dataset: $HCP_COUNT .npy files"
+    else
+        echo "   ⚠️  HCP raw directory not found after extraction"
+    fi
+    
+    if [ -d "$REPO_DIR/data/ukb/raw" ]; then
+        UKB_COUNT=$(ls -1 "$REPO_DIR/data/ukb/raw"/*.npy 2>/dev/null | wc -l)
+        echo "   ✅ UKB dataset: $UKB_COUNT .npy files"
+    else
+        echo "   ⚠️  UKB raw directory not found after extraction"
+    fi
 else
     echo "   ⚠️  dataset.zip not found in $REPO_DIR"
+    echo "   Please upload dataset.zip to continue"
 fi
 
 # Setup storage volume for models
