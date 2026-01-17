@@ -242,8 +242,10 @@ def main(args):
     logging.debug('Train args: %s', train_args)
     
     # Load dataset
-    print(f"\n📊 Loading {args.dataset.upper()} dataset...")
-    dataset = load_dataset(**dataset_args, data_dir=args.data_dir)
+    # Convert to absolute path to avoid issues with relative paths
+    data_dir = Path(args.data_dir).resolve()
+    print(f"\n📊 Loading {args.dataset.upper()} dataset from {data_dir}...")
+    dataset = load_dataset(**dataset_args, data_dir=str(data_dir))
     num_subjects, num_nodes = len(dataset), dataset[0][1][0].number_of_nodes()
     print(f"✅ Loaded {num_subjects} subjects with {num_nodes} nodes each")
     
