@@ -85,6 +85,8 @@ def load_dataset(dataset="hcp", window_size=30, window_stride=10, measure="corre
             logging.info(f'Computing dynamic functional connectivitiy...')
             G = _compute_dynamic_fc(X, window_size, window_stride, measure, top_percent, **kwargs)
             _dataset += [[idx, G, y]]
+        # Ensure parent directory exists before saving
+        _filepath.parent.mkdir(parents=True, exist_ok=True)
         with open(_filepath, "wb") as output_file:
             pickle.dump(_dataset, output_file)
     logging.info('Loaded dataset.')
