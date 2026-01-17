@@ -1,1 +1,31 @@
+# Data
 data/
+dataset.zip
+
+# Models and checkpoints
+models_*/
+*.pt
+*.npy
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Logs
+*.log
+training.log
+nohup.out
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
